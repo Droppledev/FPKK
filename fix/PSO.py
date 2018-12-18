@@ -116,7 +116,7 @@ def main():
     #print(knn.main())
 
     nParticles = 7
-    nDimensions = 12
+    nDimensions = 11
     nIterations = 10
     # w = 1
     c1, c2 = 2.05, 2.05
