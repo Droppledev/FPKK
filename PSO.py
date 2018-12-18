@@ -49,6 +49,7 @@ def normalize_dataset(dataset, minmax):
             row[i] = (row[i] - minmax[i][0]) / (minmax[i][1] - minmax[i][0])
 
 def fitFunc(k,kfold,dataset,trainingIdx,testIdx,xVals):
+    print(xVals)
     knn = KNN(k,kfold,dataset,trainingIdx,testIdx,xVals)
     return knn.main()
 
@@ -114,7 +115,7 @@ def main():
     #knn = KNN(k,kfold,dataset,trainingIdx,testIdx)
     #print(knn.main())
 
-    nParticles = 10
+    nParticles = 7
     nDimensions = 12
     nIterations = 10
     # w = 1
@@ -138,12 +139,13 @@ def main():
     F = [fitFunc(k,1,dataset,trainingIdx,testIdx,Pos[p]) for p in range(0, nParticles)]
 
     for index in range(1, nIterations):
+        print("Iteration " + repr(index) + " --------------")
         testI = []
         trainI = []
         testI.append(trainingIdx[index])
         trainI.append(testIdx[index])
         gBestValue,gBestPos = updateFitness(Pos, F, nParticles, pBestPos, pBestValue, gBestPos, gBestValue,k,1,dataset,trainI,testI)
-
+        
         print(gBestValue,gBestPos)
         history.append(gBestValue)
 
