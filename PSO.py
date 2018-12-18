@@ -3,6 +3,7 @@ import random
 import math
 import operator
 from sklearn.model_selection import StratifiedKFold
+from knn import KNN
 
 def loadDataset(filename, split, dataset=[], trainingIdx=[], testIdx=[]):
     with open(filename, 'r') as csvfile:
@@ -116,7 +117,8 @@ def main():
     k = 3
     loadDataset('winequality-red.csv', kfold,dataset, trainingIdx, testIdx)
     # cara pake knn
-    # KNN(k,kfold,dataset,trainingIdx,testIdx)
+    knn = KNN(k,kfold,dataset,trainingIdx,testIdx)
+    print(knn.main())
 
     nParticles = 3
     nDimensions = 2
