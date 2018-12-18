@@ -9,7 +9,7 @@ class KNN:
     def __init__(self,k,kfold,dataset,trainingIdx,testIdx,selection):
         self.k = k
         self.kfold = kfold
-        self.dataset = dataset
+        self.dataset = dataset[:]
         self.trainingIdx = trainingIdx
         self.testIdx = testIdx
         self.selection = selection
