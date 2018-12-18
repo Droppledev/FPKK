@@ -16,9 +16,11 @@ class KNN:
 
 
     class Distance:
-        def euclideanDistance(self, instance1, instance2, length):
+        def euclideanDistance(self, instance1, instance2, length, selection):
             distance = 0
             for x in range(length):
+                if selection[x] == 0:
+                    continue
                 distance += pow((instance1[x] - instance2[x]), 2)
             return math.sqrt(distance)
 
@@ -48,12 +50,6 @@ class KNN:
         for i in testIdx:
             testSet.append(dataset[i])
 
-    def selectFeature(self,selection, dataset):
-        indices = [i for i,x in enumerate(selection) if x == 0]
-        for i in dataset:
-            for j in sorted(indices, reverse=True):
-                del i[j]
-
 
     def getNeighbors(self,trainingSet, testInstance, k, mode=1, r=1):
         distances = []
@@ -62,7 +58,7 @@ class KNN:
         for x in range(len(trainingSet)):
             d = self.Distance()
             if mode == 1:
-                dist = d.euclideanDistance(testInstance, trainingSet[x], length)
+                dist = d.euclideanDistance(testInstance, trainingSet[x], length,self.selection)
             elif mode == 2:
                 dist = d.manhattanDistance(testInstance, trainingSet[x], length)
             elif mode == 3:
@@ -103,7 +99,7 @@ class KNN:
         # prepare data
         totalAccuracy = 0
         inDist = 1
-        self.selectFeature(self.selection,self.dataset)
+        #self.selectFeature(self.selection,self.dataset)
 
         for i in range(self.kfold):
             trainingSet = []
@@ -123,5 +119,6 @@ class KNN:
             print('Accuracy: ' + str(accuracy) + '%')
 
         avgAcc = totalAccuracy/self.kfold
-        print('\nTotal Accuracy: ' + str(avgAcc) + '%')
+        if self.kfold > 1 :
+            print('\nTotal Accuracy: ' + str(avgAcc) + '%')
         return avgAcc
