@@ -113,9 +113,10 @@ def main():
     trainingIdx = []
     testIdx = []
     kfold = 2
+    k = 3
     loadDataset('winequality-red.csv', kfold,dataset, trainingIdx, testIdx)
     # cara pake knn
-    # KNN(kfold,dataset,trainingIdx,testIdx)
+    # KNN(k,kfold,dataset,trainingIdx,testIdx)
 
     nParticles = 3
     nDimensions = 2

@@ -6,7 +6,8 @@ import operator
 from sklearn.model_selection import StratifiedKFold
 
 class KNN:
-    def __init__(self,kfold,dataset,trainingIdx,testIdx):
+    def __init__(self,k,kfold,dataset,trainingIdx,testIdx):
+        self.k = k
         self.kfold = kfold
         self.dataset = dataset
         self.trainingIdx = trainingIdx
@@ -93,7 +94,6 @@ class KNN:
     def main(self):
         # prepare data
         totalAccuracy = 0
-        k = 3
         inDist = 1
 
         for i in range(self.kfold):
@@ -105,7 +105,7 @@ class KNN:
 
             predictions = []
             for x in range(len(testSet)):
-                neighbors = self.getNeighbors(trainingSet, testSet[x], k, mode=inDist)
+                neighbors = self.getNeighbors(trainingSet, testSet[x], self.k, mode=inDist)
                 result = self.getResponse(neighbors)
                 predictions.append(result)
 
