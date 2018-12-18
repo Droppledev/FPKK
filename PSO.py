@@ -48,8 +48,8 @@ def normalize_dataset(dataset, minmax):
         for i in range(len(row)-1):
             row[i] = (row[i] - minmax[i][0]) / (minmax[i][1] - minmax[i][0])
 
-def fitFunc(xVals):
-    knn = KNN(k,kfold,dataset,trainingIdx,testIdx)
+def fitFunc(k,kfold,dataset,trainingIdx,testIdx,xVals):
+    knn = KNN(k,kfold,dataset,trainingIdx,testIdx,xVals)
     return knn.main()
 
 #beres
@@ -62,11 +62,11 @@ def initPosition(nParticles, nDimensions, xMin, xMax):
 def updatePosition(Pos, nParticles, nDimensions, xMin, xMax, V):
     for p in range(0, nParticles):
         for i in range(0, nDimensions):
-            sig = 1 / (2 + math.exp(-V[p][i])
-            if(random.random() > sig):
-               Pos[p][i] = 1
+            sig = 1 / (2 + math.exp(-V[p][i]))
+            if random.random() > sig:
+                Pos[p][i] = 1
             else:
-               Pos[p][i] = 0
+                Pos[p][i] = 0
                        
 #beres
 def initVelocity(nParticles, nDimensions, vMin, vMax):
@@ -87,10 +87,10 @@ def updateVelocity(Pos, V, nParticles, nDimensions, vMin, vMax, k, pBestPos, gBe
                            + r2*c2*(gBestPos[i] - Pos[p][i]))
 
 #beres
-def updateFitness(Pos, F, nParticles, pBestPos, pBestValue, gBestPos, gBestValue):
+def updateFitness(Pos, F, nParticles, pBestPos, pBestValue, gBestPos, gBestValue , k,kfold,dataset,trainingIdx,testIdx):
 
     for p in range(0, nParticles):
-        F[p] = fitFunc(Pos[p])
+        F[p] = fitFunc(k,kfold,dataset,trainingIdx,testIdx,Pos[p])
 
         if F[p] > gBestValue:
             gBestValue = F[p]
@@ -114,9 +114,9 @@ def main():
     #knn = KNN(k,kfold,dataset,trainingIdx,testIdx)
     #print(knn.main())
 
-    nParticles = 3
-    nDimensions = 2
-    nIterations = 3
+    nParticles = 10
+    nDimensions = 12
+    nIterations = 10
     # w = 1
     c1, c2 = 2.05, 2.05
 
@@ -133,14 +133,16 @@ def main():
     gBestPos = [0.0] * nDimensions
 
     history = []
-
     Pos = initPosition(nParticles, nDimensions, xMin, xMax)
     V = initVelocity(nParticles, nDimensions, vMin, vMax)
-    F = [fitFunc(Pos[p]) for p in range(0, nParticles)]
+    F = [fitFunc(k,1,dataset,trainingIdx,testIdx,Pos[p]) for p in range(0, nParticles)]
 
-    for _ in range(0, nIterations):       
-    
-        gBestValue,gBestPos = updateFitness(Pos, F, nParticles, pBestPos, pBestValue, gBestPos, gBestValue)
+    for index in range(1, nIterations):
+        testI = []
+        trainI = []
+        testI.append(trainingIdx[index])
+        trainI.append(testIdx[index])
+        gBestValue,gBestPos = updateFitness(Pos, F, nParticles, pBestPos, pBestValue, gBestPos, gBestValue,k,1,dataset,trainI,testI)
 
         print(gBestValue,gBestPos)
         history.append(gBestValue)
