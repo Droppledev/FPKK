@@ -6,12 +6,13 @@ import operator
 from sklearn.model_selection import StratifiedKFold
 
 class KNN:
-    def __init__(self,k,kfold,dataset,trainingIdx,testIdx):
+    def __init__(self,k,kfold,dataset,trainingIdx,testIdx,selection):
         self.k = k
         self.kfold = kfold
         self.dataset = dataset
         self.trainingIdx = trainingIdx
         self.testIdx = testIdx
+        self.selection = selection
 
 
     class Distance:
@@ -46,6 +47,13 @@ class KNN:
             trainingSet.append(dataset[i])
         for i in testIdx:
             testSet.append(dataset[i])
+
+    def selectFeature(self,selection, dataset):
+        indices = [i for i,x in enumerate(selection) if x == 0]
+        for i in dataset:
+            for j in sorted(indices, reverse=True):
+                del i[j]
+
 
     def getNeighbors(self,trainingSet, testInstance, k, mode=1, r=1):
         distances = []
@@ -95,6 +103,7 @@ class KNN:
         # prepare data
         totalAccuracy = 0
         inDist = 1
+        self.selectFeature(self.selection,self.dataset)
 
         for i in range(self.kfold):
             trainingSet = []
