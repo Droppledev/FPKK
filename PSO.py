@@ -54,7 +54,7 @@ def fitFunc(k,kfold,dataset,trainingIdx,testIdx,xVals):
 
 #beres
 def initPosition(nParticles, nDimensions, xMin, xMax):
-    Pos = [[random.randrange(xMin,xMax) for i in range(0, nDimensions)]
+    Pos = [[random.randrange(xMin,xMax+1) for i in range(0, nDimensions)]
            for p in range(0, nParticles)]
     return Pos
 
