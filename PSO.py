@@ -49,39 +49,32 @@ def normalize_dataset(dataset, minmax):
             row[i] = (row[i] - minmax[i][0]) / (minmax[i][1] - minmax[i][0])
 
 def fitFunc(xVals):
-    if xVals[1] == 0:
-        xVals[1] = random.uniform(0.1,5)
-    F = math.sqrt(xVals[0])-(1/xVals[1])
-    return F
+    knn = KNN(k,kfold,dataset,trainingIdx,testIdx)
+    return knn.main()
 
-
+#beres
 def initPosition(nParticles, nDimensions, xMin, xMax):
-    Pos = [[random.uniform(xMin,xMax) for i in range(0, nDimensions)]
+    Pos = [[random.randrange(xMin,xMax) for i in range(0, nDimensions)]
            for p in range(0, nParticles)]
-
     return Pos
 
-
+#beres
 def updatePosition(Pos, nParticles, nDimensions, xMin, xMax, V):
-
     for p in range(0, nParticles):
         for i in range(0, nDimensions):
-
-            Pos[p][i] = Pos[p][i] + V[p][i]
-
-            if Pos[p][i] > xMax:
-                Pos[p][i] = xMax
-            if Pos[p][i] < xMin:
-                Pos[p][i] = xMin
-
-
+            sig = 1 / (2 + math.exp(-V[p][i])
+            if(random.random() > sig):
+               Pos[p][i] = 1
+            else:
+               Pos[p][i] = 0
+                       
+#beres
 def initVelocity(nParticles, nDimensions, vMin, vMax):
     V = [[random.uniform(-1,1) for i in range(0, nDimensions)]
          for p in range(0, nParticles)]
-
     return V
 
-
+#beres
 def updateVelocity(Pos, V, nParticles, nDimensions, vMin, vMax, k, pBestPos, gBestPos, c1, c2):
 
     for p in range(0, nParticles):
@@ -93,6 +86,7 @@ def updateVelocity(Pos, V, nParticles, nDimensions, vMin, vMax, k, pBestPos, gBe
             V[p][i] = k * (V[p][i] + r1*c1*(pBestPos[p][i]-Pos[p][i])
                            + r2*c2*(gBestPos[i] - Pos[p][i]))
 
+#beres
 def updateFitness(Pos, F, nParticles, pBestPos, pBestValue, gBestPos, gBestValue):
 
     for p in range(0, nParticles):
@@ -113,12 +107,12 @@ def main():
     dataset = []
     trainingIdx = []
     testIdx = []
-    kfold = 2
+    kfold = 10
     k = 3
     loadDataset('winequality-red.csv', kfold,dataset, trainingIdx, testIdx)
     # cara pake knn
-    knn = KNN(k,kfold,dataset,trainingIdx,testIdx)
-    print(knn.main())
+    #knn = KNN(k,kfold,dataset,trainingIdx,testIdx)
+    #print(knn.main())
 
     nParticles = 3
     nDimensions = 2
@@ -127,9 +121,9 @@ def main():
     c1, c2 = 2.05, 2.05
 
     phi = c1+c2
-    k = 2.0/abs(2.0-phi-math.sqrt(pow(phi, 2)-4*phi))
+    konst = 2.0/abs(2.0-phi-math.sqrt(pow(phi, 2)-4*phi))
 
-    xMin, xMax = 0, 5
+    xMin, xMax = 0, 1
     vMin, vMax = -xMin, xMax
 
     gBestValue = 0.0
@@ -146,14 +140,12 @@ def main():
 
     for _ in range(0, nIterations):       
     
-        gBestValue,gBestPos = updateFitness(
-            Pos, F, nParticles, pBestPos, pBestValue, gBestPos, gBestValue)
+        gBestValue,gBestPos = updateFitness(Pos, F, nParticles, pBestPos, pBestValue, gBestPos, gBestValue)
 
         print(gBestValue,gBestPos)
         history.append(gBestValue)
 
-        updateVelocity(Pos, V, nParticles, nDimensions,
-                       vMin, vMax, k, pBestPos, gBestPos, c1, c2)
+        updateVelocity(Pos, V, nParticles, nDimensions,vMin, vMax, konst, pBestPos, gBestPos, c1, c2)
 
         updatePosition(Pos, nParticles, nDimensions, xMin, xMax, V)
 
